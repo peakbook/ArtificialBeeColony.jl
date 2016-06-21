@@ -18,9 +18,10 @@ end
 dim = 1      # input dimension of the target function
 N = 50       # the number of bees
 epoch = 100  # the number of iteration
+flag = true  # time invariant flag
 
 abc = ABC(dim, N, init)
-best = search!(abc, target, epoch)
+best = search!(abc, target, epoch, flag)
 
 println("x = ", best[1])
 println("target(x) = ", target(best))
