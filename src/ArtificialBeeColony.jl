@@ -14,12 +14,13 @@ type TimeInvariant <: TargetSystem
 end
 
 type Bee
-    data :: Vector{Float64}
-    fitness :: Float64
+    data :: Vector
+    fitness :: AbstractFloat
     count :: Integer
-    function Bee(data::Vector, fitness::Float64=0.0, count::Integer=0)
-        new(data, fitness, count)
-    end
+end
+
+function Bee(data::Vector)
+    Bee(data, zero(Float64), 0)
 end
 
 typealias Bees Vector{Bee}
@@ -39,8 +40,9 @@ type ABC
     bees :: Bees
     best :: Bee
     init :: Function
-    function ABC(dim::Integer, N::Integer, init::Function=initializer)
-        bees = Bee[Bee(init(dim)) for i=1:N]
+    function ABC(N::Integer, init::Function)
+        dim = length(init())
+        bees = Bee[Bee(init()) for i=1:N]
         new(bees, Bee(zeros(dim)), init)
     end
 end
@@ -121,20 +123,18 @@ function update_outlook!(bees::Bees, g::Function, No::Integer, mode::TimeVariant
 end
 
 function update_scout!(bees::Bees, g::Function, init::Function, limit::Integer, mode::TimeInvariant)
-    dim = length(bees[1].data)
     bees_scout = filter(x->x.count >= limit, bees)
     for bee in bees_scout
-        bee.data = init(dim)
+        bee.data = init()
         bee.count = 0
     end
     update_fitness!(bees_scout, g)
 end
 
 function update_scout!(bees::Bees, g::Function, init::Function, limit::Integer, mode::TimeVariant)
-    dim = length(bees[1].data)
     bees_scout = filter(x->x.count >= limit, bees)
     for bee in bees_scout
-        bee.data = init(dim)
+        bee.data = init()
         bee.count = 0
     end
 end
@@ -160,7 +160,7 @@ function update_best!(bees::Bees, bee_best::Bee, mode::TimeVariant)
     copy!(bee_best, find_best(bees))
 end
 
-function search!(abc::ABC, g::Function, epoch::Integer=1000, time_invariant::Bool=false)
+function search!(abc::ABC, g::Function; epoch::Integer=1000, time_invariant::Bool=false)
     mode = time_invariant ? TimeInvariant() : TimeVariant()
 
     Ne = length(abc.bees)
@@ -180,15 +180,11 @@ function search!(abc::ABC, g::Function, epoch::Integer=1000, time_invariant::Boo
     return abc.best.data
 end
 
-function initializer(dim::Integer)
-    rand(dim)
-end
-
-function fitness(val::Float64)
-    if val >= 0.0
-        return 1.0/(1.0+val)
+function fitness{T<:AbstractFloat}(val::T)
+    if val >= zero(T)
+        return one(T)/(one(T)+val)
     else
-        return 1.0+abs(val)
+        return one(T)+abs(val)
     end
 end
 
