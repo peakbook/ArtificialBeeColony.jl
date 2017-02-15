@@ -19,7 +19,7 @@ N = 50       # the number of bees
 epoch = 100  # the number of iteration
 flag = true  # time invariant flag
 
-abc = ABC(dim, N, init)
+abc = ABC(N, init)
 best = search!(abc, target; epoch=epoch, time_invaliant=flag)
 
 println("x = ", best[1])
