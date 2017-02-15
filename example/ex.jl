@@ -15,7 +15,7 @@ epoch = 100  # the number of iteration
 flag = true  # time invariant flag
 
 abc = ABC(N, init)
-best = search!(abc, target; epoch=epoch)
+best = search!(abc, target; epoch=epoch, time_invariant=flag)
 
 println("x = ", best[1])
 println("target(x) = ", target(best))
