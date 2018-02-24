@@ -5,25 +5,21 @@ module ArtificialBeeColony
 export ABC
 export search!
 
-abstract TargetSystem
+abstract type TargetSystem end
+struct TimeVariant <: TargetSystem end
+struct TimeInvariant <: TargetSystem end
 
-type TimeVariant <: TargetSystem
-end
-
-type TimeInvariant <: TargetSystem
-end
-
-type Bee
+mutable struct Bee
     data :: Vector
     fitness :: AbstractFloat
     count :: Integer
 end
 
 function Bee(data::Vector)
-    Bee(data, zero(Float64), 0)
+    Bee(data, zero(eltype(data)), zero(Integer))
 end
 
-typealias Bees Vector{Bee}
+const Bees = Vector{Bee}
 
 function Base.copy!(t::Bee, s::Bee)
     copy!(t.data, s.data)
@@ -36,7 +32,7 @@ function Base.copy(s::Bee)
     return Bee(copy(s.data), s.fitness, s.count)
 end
 
-type ABC
+struct ABC
     bees :: Bees
     best :: Bee
     init :: Function
@@ -180,7 +176,7 @@ function search!(abc::ABC, g::Function; epoch::Integer=1000, time_invariant::Boo
     return abc.best.data
 end
 
-function fitness{T<:AbstractFloat}(val::T)
+function fitness(val::T) where T<:AbstractFloat
     if val >= zero(T)
         return one(T)/(one(T)+val)
     else
