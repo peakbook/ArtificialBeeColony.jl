@@ -2,7 +2,7 @@ using ArtificialBeeColony
 
 # initializer for bees' position
 function init()
-    rand(1)*20-10   # [-10, 10] 
+    rand(1)*20 .- 10   # [-10, 10] 
 end
 
 # target function

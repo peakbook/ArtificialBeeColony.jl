@@ -21,8 +21,8 @@ end
 
 const Bees = Vector{Bee}
 
-function Base.copy!(t::Bee, s::Bee)
-    copy!(t.data, s.data)
+function Base.copyto!(t::Bee, s::Bee)
+    copyto!(t.data, s.data)
     t.fitness = s.fitness
     t.count = s.count
     return t
@@ -148,12 +148,12 @@ end
 function update_best!(bees::Bees, bee_best::Bee, mode::TimeInvariant)
     bee_cand = find_best(bees)
     if bee_best.fitness < bee_cand.fitness
-        copy!(bee_best, bee_cand)
+        copyto!(bee_best, bee_cand)
     end
 end
 
 function update_best!(bees::Bees, bee_best::Bee, mode::TimeVariant)
-    copy!(bee_best, find_best(bees))
+    copyto!(bee_best, find_best(bees))
 end
 
 function search!(abc::ABC, g::Function; epoch::Integer=1000, time_invariant::Bool=false)
