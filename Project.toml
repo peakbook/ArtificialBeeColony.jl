@@ -1,0 +1,4 @@
+name = "ArtificialBeeColony"
+uuid = "2100474d-c724-4f2e-a4f9-cb73092e96d4"
+authors = ["peakbook <peakbook@users.noreply.github.com>"]
+version = "0.1.0"
